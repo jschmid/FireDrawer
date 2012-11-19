@@ -11,6 +11,7 @@ import android.os.Bundle;
 public class DrawerActivity extends Activity {
 
 	private FirebaseEngine mEngine;
+	private DrawingFragment mFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,18 +22,28 @@ public class DrawerActivity extends Activity {
 		mEngine.setLoadedListener(new FirebaseLoaded() {
 			@Override
 			public void firebaseLoaded() {
-				addFragment();
+				FragmentManager fm = getFragmentManager();
+				FragmentTransaction ft = fm.beginTransaction();
+				ft.add(R.id.fragment_holder, ChildInput.newInstance());
+				ft.commit();
 			}
 		});
 		mEngine.loadEngine(this);
 	}
 
-	private void addFragment() {
-		Firebase f = mEngine.newFirebase("https://neqo.firebaseio.com").child("drawing");
+	protected void connect(String childName) {
+		addFragment(childName);
+	}
+
+	private void addFragment(String childName) {
+		Firebase f = mEngine.newFirebase("https://neqo.firebaseio.com").child("drawing").child(childName);
+
+		mFragment = DrawingFragment.newInstance(f);
 
 		FragmentManager fm = getFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
-		ft.add(R.id.fragment_holder, DrawingFragment.newInstance(f));
+		ft.replace(R.id.fragment_holder, mFragment);
+		ft.addToBackStack(null);
 		ft.commit();
 	}
 

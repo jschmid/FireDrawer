@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">FireDrawer</string>
+
+    <string name="app_name">FireDrawings</string>
+
+    <string name="connect">Connect</string>
+
+    <string name="input_text">Go to http://android.schmid.pro/firebase and enter below the board ID you get there.</string>
+
 </resources>
