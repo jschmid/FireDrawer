@@ -1,7 +1,9 @@
 package pro.schmid.android.firedrawer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import pro.schmid.android.androidonfire.DataSnapshot;
 import pro.schmid.android.androidonfire.Firebase;
@@ -14,10 +16,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.google.gson.JsonPrimitive;
 
@@ -26,11 +33,21 @@ public class DrawingFragment extends Fragment {
 	private static final String TAG = DrawingFragment.class.getSimpleName();
 	private static final int SIZE = 48;
 	private static final String[] COLOR_STRINGS = new String[] { "ffffff", "000000", "ff0000", "00ff00", "0000ff", "8888ff", "ff88dd", "ff8888", "ff0055", "ff8800", "00ff88", "ccff00", "0088ff", "440088", "ffff88", "88ffff" };
+	private static final Map<String, Integer> STRING_TO_COLOR = new LinkedHashMap<String, Integer>();
 
 	private final String[][] mPixels = new String[SIZE][SIZE];
 	private final Firebase mFirebase;
 
+	private String mCurrentColor = "000000";
+
 	private PixelsView mPixelsView;
+
+	static {
+		for (String color : COLOR_STRINGS) {
+			int c = Color.parseColor("#" + color);
+			STRING_TO_COLOR.put(color, c);
+		}
+	}
 
 	public DrawingFragment(Firebase firebase) {
 		this.mFirebase = firebase;
@@ -46,9 +63,53 @@ public class DrawingFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		LinearLayout rl = new LinearLayout(getActivity());
+		rl.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f));
+		rl.setOrientation(LinearLayout.VERTICAL);
+
 		mPixelsView = new PixelsView(getActivity());
-		return mPixelsView;
+		LinearLayout.LayoutParams lpp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		lpp.gravity = Gravity.CENTER;
+		mPixelsView.setLayoutParams(lpp);
+		rl.addView(mPixelsView);
+
+		LinearLayout buttons1 = new LinearLayout(getActivity());
+		buttons1.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		buttons1.setOrientation(LinearLayout.HORIZONTAL);
+		rl.addView(buttons1);
+
+		LinearLayout buttons2 = new LinearLayout(getActivity());
+		buttons2.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		buttons2.setOrientation(LinearLayout.HORIZONTAL);
+		rl.addView(buttons2);
+
+		int i = 0;
+		for (Entry<String, Integer> c : STRING_TO_COLOR.entrySet()) {
+			Button b = new Button(getActivity());
+			b.setBackgroundColor(c.getValue());
+			LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
+			b.setLayoutParams(lp);
+			b.setTag(c.getKey());
+			b.setOnClickListener(mColorButtonClickListener);
+
+			if (++i % 2 == 0) {
+				buttons2.addView(b);
+			} else {
+				buttons1.addView(b);
+			}
+		}
+
+		return rl;
+		// return mPixelsView;
 	}
+
+	private final OnClickListener mColorButtonClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			mCurrentColor = (String) v.getTag();
+		}
+	};
 
 	private final DataEvent mPixelListener = new DataEvent() {
 		@Override
@@ -90,7 +151,7 @@ public class DrawingFragment extends Fragment {
 
 	private class PixelsView extends View {
 
-		private final Map<String, Paint> colors = new HashMap();
+		private final Map<String, Paint> mColors = new HashMap();
 
 		private int mSurfaceW, mSurfaceH;
 		private int mPixelSize;
@@ -106,11 +167,10 @@ public class DrawingFragment extends Fragment {
 			mPaint.setStrokeCap(Paint.Cap.SQUARE);
 			mPaint.setStrokeWidth(12);
 
-			for (String color : COLOR_STRINGS) {
+			for (Entry<String, Integer> c : STRING_TO_COLOR.entrySet()) {
 				Paint tmp = new Paint(mPaint);
-				int c = Color.parseColor("#" + color);
-				tmp.setColor(c);
-				colors.put(color, tmp);
+				tmp.setColor(c.getValue());
+				mColors.put(c.getKey(), tmp);
 			}
 		}
 
@@ -146,7 +206,7 @@ public class DrawingFragment extends Fragment {
 						int endX = (x + 1) * mPixelSize;
 						int endY = (y + 1) * mPixelSize;
 
-						Paint paint = colors.get(pixelColor);
+						Paint paint = mColors.get(pixelColor);
 
 						if (paint != null) {
 							canvas.drawRect(beginX, beginY, endX, endY, paint);
@@ -192,8 +252,13 @@ public class DrawingFragment extends Fragment {
 			int pixelX = (int) (x / mPixelSize);
 			int pixelY = (int) (y / mPixelSize);
 			String name = pixelX + ":" + pixelY;
+			Firebase child = mFirebase.child(name);
 
-			mFirebase.child(name).set(new JsonPrimitive("000000"));
+			if ("ffffff".equalsIgnoreCase(mCurrentColor)) {
+				child.remove();
+			} else {
+				child.set(new JsonPrimitive(mCurrentColor));
+			}
 
 			// switch (event.getAction()) {
 			// case MotionEvent.ACTION_DOWN:
