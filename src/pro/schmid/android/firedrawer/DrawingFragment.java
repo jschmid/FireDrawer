@@ -193,7 +193,7 @@ public class DrawingFragment extends Fragment {
 			int pixelY = (int) (y / mPixelSize);
 			String name = pixelX + ":" + pixelY;
 
-			mFirebase.child(name).set(new JsonPrimitive("000"));
+			mFirebase.child(name).set(new JsonPrimitive("000000"));
 
 			// switch (event.getAction()) {
 			// case MotionEvent.ACTION_DOWN:
