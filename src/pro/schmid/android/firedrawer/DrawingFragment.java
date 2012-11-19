@@ -16,7 +16,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Space;
 
 import com.google.gson.JsonPrimitive;
 
@@ -64,25 +64,22 @@ public class DrawingFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		LinearLayout rl = new LinearLayout(getActivity());
-		rl.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f));
-		rl.setOrientation(LinearLayout.VERTICAL);
+		LinearLayout.LayoutParams lpp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
+		Space s1 = new Space(getActivity());
+		s1.setLayoutParams(lpp);
+		Space s2 = new Space(getActivity());
+		s2.setLayoutParams(lpp);
 
 		mPixelsView = new PixelsView(getActivity());
-		LinearLayout.LayoutParams lpp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		lpp.gravity = Gravity.CENTER;
-		mPixelsView.setLayoutParams(lpp);
-		rl.addView(mPixelsView);
+		mPixelsView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
 		LinearLayout buttons1 = new LinearLayout(getActivity());
 		buttons1.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		buttons1.setOrientation(LinearLayout.HORIZONTAL);
-		rl.addView(buttons1);
 
 		LinearLayout buttons2 = new LinearLayout(getActivity());
 		buttons2.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 		buttons2.setOrientation(LinearLayout.HORIZONTAL);
-		rl.addView(buttons2);
 
 		int i = 0;
 		for (Entry<String, Integer> c : STRING_TO_COLOR.entrySet()) {
@@ -100,8 +97,17 @@ public class DrawingFragment extends Fragment {
 			}
 		}
 
+		LinearLayout rl = new LinearLayout(getActivity());
+		rl.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
+		rl.setOrientation(LinearLayout.VERTICAL);
+
+		rl.addView(s1);
+		rl.addView(mPixelsView);
+		rl.addView(s2);
+		rl.addView(buttons1);
+		rl.addView(buttons2);
+
 		return rl;
-		// return mPixelsView;
 	}
 
 	private final OnClickListener mColorButtonClickListener = new OnClickListener() {
