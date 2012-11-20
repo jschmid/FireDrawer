@@ -9,14 +9,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:lineSpacingMultiplier="1.2"
         android:linksClickable="true"
         android:text="@string/input_text" />
-
+
     <EditText
         android:id="@+id/child_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:hint="@string/input_hint"
         android:paddingBottom="20dp"
         android:paddingTop="20dp" >
 

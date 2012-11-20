@@ -82,10 +82,10 @@ public class DrawingFragment extends Fragment {
 		buttons2.setOrientation(LinearLayout.HORIZONTAL);
 
 		int i = 0;
+		LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
 		for (Entry<String, Integer> c : STRING_TO_COLOR.entrySet()) {
 			Button b = new Button(getActivity());
 			b.setBackgroundColor(c.getValue());
-			LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1f);
 			b.setLayoutParams(lp);
 			b.setTag(c.getKey());
 			b.setOnClickListener(mColorButtonClickListener);
