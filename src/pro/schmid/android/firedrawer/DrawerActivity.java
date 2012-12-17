@@ -39,6 +39,12 @@ public class DrawerActivity extends Activity {
 		mEngine.loadEngine(this);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mFirebaseEngine.onDestroy();
+	}
+
 	protected void connect(String childName) {
 		if (childName == null || childName.length() == 0) {
 			runOnUiThread(new Runnable() {
