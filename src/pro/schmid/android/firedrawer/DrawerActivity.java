@@ -42,7 +42,7 @@ public class DrawerActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mFirebaseEngine.onDestroy();
+		mEngine.onDestroy();
 	}
 
 	protected void connect(String childName) {
