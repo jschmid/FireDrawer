@@ -24,13 +24,15 @@ public class ChildInput extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		final View v = inflater.inflate(R.layout.child_input, container, false);
 
-		Button b = (Button) v.findViewById(R.id.connect_button);
-		b.setOnClickListener(new OnClickListener() {
+		final Button connectButton = (Button) v.findViewById(R.id.connect_button);
+		connectButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v2) {
 				EditText et = (EditText) v.findViewById(R.id.child_name);
+				String childName = et.getText().toString().trim();
 
-				String childName = et.getText().toString();
+				et.setEnabled(false);
+				connectButton.setEnabled(false);
 
 				InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 				imm.hideSoftInputFromWindow(et.getWindowToken(), 0);

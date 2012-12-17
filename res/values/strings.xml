@@ -2,7 +2,8 @@
 
     <string name="app_name">FireDrawings</string>
     <string name="connect">Connect</string>
-    <string name="input_text">Go to http://androidonfire.schmid.pro/draw from your desktop.\nEnter below the board ID you got there.\nYou can alternatively use your own id.\n(By using your name, etc...)</string>
+    <string name="input_text">If you have a board ID (from the website or this app) enter it below.\nOtherwise just click "Connect" and I will generate a new shinny one for you!</string>
     <string name="input_hint">Your board ID</string>
+    <string name="windows_title">Board ID: %s</string>
 
 </resources>

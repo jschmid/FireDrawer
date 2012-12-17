@@ -49,7 +49,7 @@ public class DrawingFragment extends Fragment {
 		}
 	}
 
-	public DrawingFragment(Firebase firebase) {
+	private DrawingFragment(Firebase firebase) {
 		this.mFirebase = firebase;
 
 		this.mFirebase.on(EventType.child_added, mPixelListener);
@@ -157,9 +157,8 @@ public class DrawingFragment extends Fragment {
 
 	private class PixelsView extends View {
 
-		private final Map<String, Paint> mColors = new HashMap();
+		private final Map<String, Paint> mColors = new HashMap<String, Paint>();
 
-		private int mSurfaceW, mSurfaceH;
 		private int mPixelSize;
 
 		public PixelsView(Context ctx) {
@@ -192,8 +191,6 @@ public class DrawingFragment extends Fragment {
 		protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 			super.onSizeChanged(w, h, oldw, oldh);
 
-			mSurfaceW = w;
-			mSurfaceH = h;
 			int squareSide = w > h ? h : w;
 			mPixelSize = squareSide / SIZE;
 		}
