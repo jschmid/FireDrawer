@@ -3,6 +3,7 @@ package pro.schmid.android.firedrawer;
 import pro.schmid.android.androidonfire.DataSnapshot;
 import pro.schmid.android.androidonfire.Firebase;
 import pro.schmid.android.androidonfire.FirebaseEngine;
+import pro.schmid.android.androidonfire.callbacks.FirebaseLoaded;
 import pro.schmid.android.androidonfire.callbacks.Transaction;
 import pro.schmid.android.androidonfire.callbacks.TransactionComplete;
 import android.app.Activity;
@@ -25,7 +26,7 @@ public class DrawerActivity extends Activity {
 		setContentView(R.layout.main);
 
 		mEngine = FirebaseEngine.getInstance();
-		mEngine.setLoadedListener(new pro.schmid.android.androidonfire.callbacks.FirebaseLoaded() {
+		mEngine.setLoadedListener(new FirebaseLoaded() {
 			@Override
 			public void firebaseLoaded() {
 				FragmentManager fm = getFragmentManager();
@@ -47,12 +48,7 @@ public class DrawerActivity extends Activity {
 
 	protected void connect(String childName) {
 		if (childName == null || childName.length() == 0) {
-			runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					generateBoard();
-				}
-			});
+			generateBoard();
 		} else {
 			addFragment(childName);
 		}
@@ -73,28 +69,28 @@ public class DrawerActivity extends Activity {
 		}, new TransactionComplete() {
 			@Override
 			public void onComplete(boolean success, final DataSnapshot snapshot, String reason) {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						addFragment(snapshot.val().getAsString());
-					}
-				});
+				addFragment(snapshot.val().getAsString());
 			}
 		});
 	}
 
-	private void addFragment(String childName) {
+	private void addFragment(final String childName) {
 		Firebase f = mFirebase.child("drawings").child(childName);
 
 		mFragment = DrawingFragment.newInstance(f);
 
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.replace(R.id.fragment_holder, mFragment);
-		ft.addToBackStack(null);
-		ft.commit();
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				FragmentManager fm = getFragmentManager();
+				FragmentTransaction ft = fm.beginTransaction();
+				ft.replace(R.id.fragment_holder, mFragment);
+				ft.addToBackStack(null);
+				ft.commit();
 
-		setTitle(getResources().getString(R.string.windows_title, childName));
+				setTitle(getResources().getString(R.string.windows_title, childName));
+			}
+		});
 	}
 
 }

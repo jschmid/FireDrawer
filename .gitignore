@@ -2,4 +2,6 @@ bin
 gen
 proguard
 lint.xml
+.settings
+
 
